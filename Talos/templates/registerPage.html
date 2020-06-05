@@ -23,6 +23,18 @@
   <body>
     
     <div class="container">
+       
+        <div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" style="text-align: center;">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </div>
         <div class="d-flex justify-content-center h-100">
             <div class="card">
                 <div class="card-header" style="background-color: rgba(0, 0, 0, 0.892);">
@@ -30,33 +42,93 @@
                 </div>
                 <div class="card-body">
                     <form method="POST">
-                        <div class="input-group form-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                     
+                        {% if validationMessage == "Please add your name!" %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="txtName" class="form-control" placeholder="Name">
                             </div>
-                            <input type="text" name="txtfullName" class="form-control" placeholder="Full Name">
-                        </div>
-                        <div class="input-group form-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-envelope-open"></i></span>
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% else %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="txtName" class="form-control" placeholder="Name">
                             </div>
-                            <input type="password" name="txtEmail" class="form-control" placeholder="Email">
-                        </div>
-                        <div class="input-group form-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                        {% endif %}
+                        {% if validationMessage == "Please add your surname!" %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="txtSurname" class="form-control" placeholder="Surname">
                             </div>
-                            <input type="password" name="txtPassword" class="form-control" placeholder="Password">
-                        </div>
-                        <div class="input-group form-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-check"></i></span>
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% else %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="txtSurname" class="form-control" placeholder="Surname">
                             </div>
-                            <input type="password" name="txtconfirmPassword" class="form-control" placeholder="Confirm Password">
-                        </div>
+                        {% endif %}
+                        {% if validationMessage  == "Please add your email!" %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-envelope-open"></i></span>
+                                </div>
+                                <input  name="txtEmail" class="form-control" placeholder="Email">
+                            </div>
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% else %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-envelope-open"></i></span>
+                                </div>
+                                <input  name="txtEmail" class="form-control" placeholder="Email">
+                            </div>
+                        {% endif %}
+                        {% if validationMessage == "Please add your password!" %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                </div>
+                                <input type="password" name="txtPassword" class="form-control" placeholder="Password">
+                            </div>
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% else %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                </div>
+                                <input type="password" name="txtPassword" class="form-control" placeholder="Password">
+                            </div>
+                        {% endif %}
+                        {% if validationMessage == "Please confirm password!" %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-check"></i></span>
+                                </div>
+                                <input type="password" name="txtconfirmPassword" class="form-control" placeholder="Confirm Password">
+                            </div>
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% else %}
+                            <div class="input-group form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-check"></i></span>
+                                </div>
+                                <input type="password" name="txtconfirmPassword" class="form-control" placeholder="Confirm Password">
+                            </div>
+                        {% endif %}
+                        {% if validationMessage == "Password don't match" %}
+                            <span class="badge badge-pill badge-danger">{{ validationMessage }}</span>
+                        {% endif %}
                         
                         <div class="form-group">
-                            <input type="submit" value="Login" class="btn float-right login_btn">
+                            <input type="submit" value="Register" class="btn float-right login_btn">
                         </div>
                     </form>
                 </div>
