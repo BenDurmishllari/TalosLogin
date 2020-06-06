@@ -1,6 +1,8 @@
 from Talos import app, db
 from Talos.model import User
-from Talos.validators import EmailValidator, PasswordValidator
+from Talos.validators import EmailValidator, PasswordValidator, PasswordStronLevelValidator
+from password_strength import PasswordStats
+from cryptography.fernet import Fernet
 from flask import (render_template, 
                    redirect, 
                    url_for, 
@@ -13,6 +15,7 @@ import re
 
 emailValidator = EmailValidator()
 passwordValidator = PasswordValidator()
+passwordStrongLevel = PasswordStronLevelValidator()
 
 
 
@@ -40,7 +43,8 @@ def login():
 def register():
     validationMessage = ""
     global btnChecker
-    
+    passwordStrenght = 0
+    passFlag = False
     if request.method == 'POST':
 
         name = request.form['txtName']
@@ -48,11 +52,17 @@ def register():
         email = request.form['txtEmail']
         password = request.form['txtPassword']
         confirmPassword = request.form['txtconfirmPassword']
-       
+        
 
         if 'btnCheckPassword' in request.form:
             btnChecker = True
-            validationMessage = passwordValidator.checkPassword(password)
+            passFlag = True
+            results = passwordValidator.checkPassword(password)
+            # passwordStrenght = round(passwordStrongLevel.checkStrongLevelPassword(password).strength(),2)
+            # print(passwordStrenght)
+            validationMessage = results[0]
+            passwordlvl = results[1]
+            passwordStrenght = round(passwordlvl.strength(), 2)
         
         if 'btnRegister' in request.form:
             if btnChecker == True:
@@ -61,11 +71,20 @@ def register():
                   
                     if password == confirmPassword:
                         checkInputEmail = emailValidator.checkEmail(email)
-                        if checkInputEmail == "Email is valid!": 
-                            user = User(name = name,
-                                        surname = surname,
-                                        email = email,
-                                        password = password)
+                        if checkInputEmail == "Email is valid!":
+
+                            key = Fernet.generate_key()
+                            f = Fernet(key)
+                            encryptName = f.encrypt(name.encode('ascii'))
+                            encryptSurname = f.encrypt(surname.encode('ascii'))
+                            encryptEmail = f.encrypt(email.encode('ascii'))
+                            encryptPassword = f.encrypt(password.encode('ascii'))
+
+
+                            user = User(name = encryptName,
+                                        surname = encryptSurname,
+                                        email = encryptEmail,
+                                        password = encryptPassword)
 
                             db.session.add(user)
                             db.session.commit()
@@ -92,6 +111,6 @@ def register():
                 validationMessage = "Please check your password before register"
             
 
-    return render_template('registerPage.html', validationMessage=validationMessage)
+    return render_template('registerPage.html', validationMessage=validationMessage, passwordStrenght=passwordStrenght,passFlag=passFlag )
 
     

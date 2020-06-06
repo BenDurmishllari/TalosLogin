@@ -1,4 +1,6 @@
+from password_strength import PasswordStats
 import re
+
 
 class EmailValidator:
 
@@ -13,23 +15,62 @@ class EmailValidator:
         return msg
 
 class PasswordValidator:
-
+    
+    
     msg = ""
     def checkPassword(self, password):
-
-        if len(password) < 6 or len(password) > 10:
-            msg = "Password should be between 6 & 10 characters"
+        results = []
+        if len(password) < 6:
+            msg = "Password should be at least 6 characters"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
         elif not re.search("[a-z]", password):
-            msg = "Password must have at least one lowercase"
+            msg = "Add at least one lowecase for stronger password"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
         elif not re.search("[0-9]", password):
-            msg = "Password must have at least one number"
+            msg = "Add at least one number for stronger password"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
         elif not re.search("[A-Z]", password):
-            msg = "Password must have at least one upercase"
-        elif not re.search("[#@<->,!?;$%^&*]", password):
-            msg = "Password must have at least one symbol"
+            msg = "Add at least one upercase for stronger password"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
+        elif not re.search("[#@<>_,!?;$%^&*]", password):
+            msg = "Add at least one symbol for stronger password"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
         else:
             msg = "Your password is Valid"
+            passwordStrongLevel = PasswordStats(password)
+            results.append(msg)
+            results.append(passwordStrongLevel)
+            
+        return results
+
+class PasswordStronLevelValidator:
+    
+    msg = ""
+    def checkStrongLevelPassword(self, password):
+
+        if len(password) < 6 or len(password) > 10:
+            passwordStrongLevel = PasswordStats(password)
+        elif not re.search("[a-z]", password):
+            passwordStrongLevel = PasswordStats(password)
+        elif not re.search("[0-9]", password):
+            passwordStrongLevel = PasswordStats(password)
+        elif not re.search("[A-Z]", password):
+            passwordStrongLevel = PasswordStats(password)
+        elif not re.search("[#@<->,!?;$%^&*_]", password):
+            passwordStrongLevel = PasswordStats(password)
+        else:
+            passwordStrongLevel = PasswordStats(password)
         
-        return msg
+        return passwordStrongLevel
        
         

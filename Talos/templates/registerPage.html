@@ -114,22 +114,47 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-key"></i></span>
                                 </div>
-                                <input  name="txtPassword" class="form-control" placeholder="Password">
+                                <input  type="password" name="txtPassword" class="form-control" placeholder="Password">
                             </div>
                         {% endif %}
-                        {% if validationMessage == "Password should be between 6 & 10 characters" %}
+                        {% if passwordStrenght < 0.4 and passFlag == True %}
+                            <div class="row">
+                                <span class="dot" style="background-color: red; margin-left: 10px; margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: red; margin-right: 3px;"></span>
+                                <h4 style="padding-right: 10px;">Weak</h4>
+                            </div>
+                        {% elif passwordStrenght >= 0.4 and passwordStrenght <= 0.6 %}
+                            <div class="row">
+                                <span class="dot" style="background-color: red; margin-left: 10px; margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: red; margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: rgb(255, 174, 0); margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: rgb(255, 174, 0); margin-right: 3px;"></span>
+                                <h4 style="padding-right: 10px;">Medium</h4>
+                            </div>
+                        {% elif passwordStrenght > 0.6 %}
+                            <div class="row">
+                                <span class="dot" style="background-color: red; margin-left: 10px; margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: red; margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: rgb(255, 174, 0); margin-right: 3px;"></span>
+                                <span class="dot" style="background-color: rgb(255, 174, 0); margin-right: 3px;"></span>
+                                <span class="dot" style="background-color:rgb(6, 191, 65); margin-right: 3px;"></span>
+                                <span class="dot" style="background-color:rgb(6, 191, 65); margin-right: 3px;"></span>
+                                <h4 style="padding-right: 10px;">Strong</h4>
+                            </div>
+                        {% endif %}
+                        {% if validationMessage == "Password should be at least 6 characters" %}
                             <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}
-                        {% if validationMessage == "Password must have at least one lowercase" %}
+                        {% if validationMessage == "Add at least one lowecase for stronger password" %}
                             <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}
-                        {% if validationMessage == "Password must have at least one number" %}
+                        {% if validationMessage == "Add at least one number for stronger password" %}
                             <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}
-                        {% if validationMessage == "Password must have at least one upercase" %}
+                        {% if validationMessage == "Add at least one upercase for stronger password" %}
                             <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}
-                        {% if validationMessage == "Password must have at least one symbol" %}
+                        {% if validationMessage == "Add at least one symbol for stronger password" %}
                             <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}
                         {% if validationMessage == "Your password is Valid" %}

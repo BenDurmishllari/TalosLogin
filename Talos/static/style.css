@@ -178,9 +178,11 @@ margin-left: 4px;
 .dot {
     height: 25px;
     width: 25px;
-    background-color: #bbb;
+    /* background-color: #bbb; */
     border-radius: 50%;
-    display: inline-block;
+    display: block;
+    /* display: inline-block; */
+    margin-bottom: 25px;
 }
 
 /* dot */
