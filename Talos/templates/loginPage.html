@@ -50,6 +50,9 @@
                         {% else %}
                           <input type="password" name="txtPassword" class="form-control" placeholder="Password">
                         {% endif %}
+                        {% if validationMessage == "Wrong credentials, please try again" %}
+                          <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
+                        {% endif %}
                         {% if validationMessage == "Please fil the fields" %}
                           <span class="badge badge-pill badge-danger" style="margin-bottom: 7px; top: -15px; font-size: medium;">{{ validationMessage }}</span>
                         {% endif %}

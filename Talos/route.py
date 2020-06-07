@@ -1,4 +1,4 @@
-from Talos import app, db
+from Talos import app, db, mail
 from Talos.model import User
 from Talos.validators import EmailValidator, PasswordValidator
 from password_strength import PasswordStats
@@ -9,7 +9,14 @@ from flask import (render_template,
                    request, 
                    flash, 
                    request, 
-                   abort)
+                   abort,
+                   session)
+from flask_login import (login_user, 
+                         logout_user, 
+                         login_required, 
+                         current_user)
+from flask_mail import Mail, Message
+import math, random 
 import re
 
 
@@ -17,7 +24,7 @@ emailValidator = EmailValidator()
 passwordValidator = PasswordValidator()
 
 key = b'TX94plX7njPJ0e5H1egJXikQm7qy1t5k91DBAlPGiV8='
-
+current_userData = {}
 
 
 # @app.after_request
@@ -37,57 +44,123 @@ btnChecker = False
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     global key
+    global current_userData
     validationMessage = ""
     currentUserEmail = ""
     currentUserPassword = ""
+
     if request.method == 'POST':
 
         email = request.form['txtEmail']
         password = request.form['txtPassword']
         f = Fernet(key)
         users = User.query.all()
+       
+        string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        oneTimeUsedCode = "" 
+        length = len(string) 
+        for i in range(4): 
+            oneTimeUsedCode += string[math.floor(random.random() * length)] 
         datas = {}
         for user in users:
 
-            decryptUserEmail = f.decrypt(user.email)
-            decryptUserPassword = f.decrypt(user.password)
+            decryptUserNames = f.decrypt(user.name)
+            decryptUserSurnames = f.decrypt(user.surname)
+            decryptUserEmails = f.decrypt(user.email)
+            decryptUserPasswords = f.decrypt(user.password)
 
-            usersEmail = decryptUserEmail.decode('ascii')
-            usersPassword = decryptUserPassword.decode('ascii')
+            usersName = decryptUserNames.decode('ascii')
+            usersSurname = decryptUserSurnames.decode('ascii')
+            usersEmail = decryptUserEmails.decode('ascii')
+            usersPassword = decryptUserPasswords.decode('ascii')
 
-            datas[usersEmail] = usersPassword 
-        print(datas)
+            datas[user.id] = usersName, usersSurname, usersEmail, usersPassword
         for k,v in datas.items():
-            if email in k:
-                currentUserEmail = k
+            if email in v:
+                rowID = k
+                current_userData[rowID] = [v[0], v[1], v[2], v[3]]
+                currentUserEmail = v[2]
             if password in v:
-                currentUserPassword = v
-        # print(currentUserEmail)
-        # print(currentUserPassword)
+                currentUserPassword = v[3]
         
+
         if email == "" and password == "":
             validationMessage = "Please fil the fields"
         elif email == "":
             validationMessage = "Please fill the email field"
         elif password == "":
             validationMessage = "Please fill the password field"
-        elif email not in currentUserEmail:
-            validationMessage = "Wrong Email, please try again"
-        elif password not in currentUserPassword:
-            validationMessage = "Wrong Password, please try again"
         else:
-            if email == currentUserEmail and password == currentUserPassword:
-                
-                return redirect(url_for('verify'))
-    
+            for k,v in current_userData.items():
+                if email not in v and password not in v:
+                    validationMessage = "Wrong credentials, please try again"
+                elif email not in v:
+                    validationMessage = "Wrong Email, please try again"
+                elif password not in v:
+                    validationMessage = "Wrong Password, please try again"
+                else:
+                    if email in v and password in v:
+                        
+                        user = User.query.filter_by(id = k).first()
+                        session['current_userId'] = k
+                        session['oneTimeCode'] = oneTimeUsedCode
+                        current_userData[rowID].append(oneTimeUsedCode)
+                        # print(current_userData)
+                        login_user(user)
+                        # print(user)
+                        message = Message('Request to reset your password',
+                            sender = 'badasslevelover9000@outlook.com', 
+                            recipients = [currentUserEmail])
 
+
+                        message.body = f''' Please add the code on the website in order to login:
+                        
+                        Code:''' + " " + oneTimeUsedCode  + f'''
+                        
+                        
+                        This is an email to login on Talos website, if you didn't make this request ignore this email and contact the administrator
+                        '''
+
+                        mail.send(message)
+                        # print(current_userData)
+                        # print("-------------------")
+                        # print(session['current_userId'])
+                        # print("----------------")
+                        # print(session['oneTimeCode'])
+                        return redirect(url_for('verify'))
+                    # else:
+                    #     validationMessage = "Wrong credentials"
 
     return render_template('loginPage.html', validationMessage=validationMessage)
 
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
+
+    global current_userData
+    if request.method == 'POST':
+
+        code = request.form['txtCode']
+        oneTimeCodeFromSession = session.get('oneTimeCode')
+        cUserIdFromSession = session.get('current_userId')
+
+        for k,v in current_userData.items():
+            codeFromData = v[4]
+        
+        if code == oneTimeCodeFromSession and code == codeFromData:
+            return redirect(url_for('home'))
+        else:
+            print("malakia")
+
+
     return render_template ('authPage.html')
+
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+
+    return render_template ('homePage.html')
+
 
 
 @app.route('/register', methods=['GET', 'POST'])

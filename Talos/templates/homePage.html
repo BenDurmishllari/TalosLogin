@@ -16,26 +16,25 @@
 
 
     <div class="sidenav">
-        
+        <!-- <img style="position: relative;" src="{{url_for('static', filename='logo/talos-coin-1.gif')}}" alt="Italian Trulli"> -->
         <div class="login-main-text">
-           <h2>Talos<br> User Authentication Page</h2>
-           <p>Change Password?</p>
-           <button type="button" onclick="window.location.href='{{ url_for( 'register' ) }}';" class="btn btn-secondary">Change Password</button>
+           <h2>Talos<br> Home Page</h2>
+           <p>Do you want to logout?</p>
+           <button type="button" onclick="window.location.href='{{ url_for( 'register' ) }}';" class="btn btn-secondary">Logout</button>
         </div>
     </div>
     <div class="main">
         <div class="col-md-6 col-sm-12">
            <div class="login-form">
                 <form method="POST">
-                    <!-- <div class="form-group">
-                        <label>Email</label>
-                        <input type="text" name="txtEmail" class="form-control" placeholder="Email">
-                    </div> -->
                     <div class="form-group">
-                        <label>Please add your code</label>
-                        <input name="txtCode" class="form-control" placeholder="Code">
+                        
+                        
                     </div>
-                    <button type="submit" class="btn btn-black">Login</button>
+                    <div class="form-group">
+                        
+                    </div>
+                    
                 </form>
            </div>
         </div>
