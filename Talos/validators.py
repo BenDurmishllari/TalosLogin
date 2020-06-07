@@ -53,24 +53,24 @@ class PasswordValidator:
             
         return results
 
-class PasswordStronLevelValidator:
+# class PasswordStronLevelValidator:
     
-    msg = ""
-    def checkStrongLevelPassword(self, password):
+#     msg = ""
+#     def checkStrongLevelPassword(self, password):
 
-        if len(password) < 6 or len(password) > 10:
-            passwordStrongLevel = PasswordStats(password)
-        elif not re.search("[a-z]", password):
-            passwordStrongLevel = PasswordStats(password)
-        elif not re.search("[0-9]", password):
-            passwordStrongLevel = PasswordStats(password)
-        elif not re.search("[A-Z]", password):
-            passwordStrongLevel = PasswordStats(password)
-        elif not re.search("[#@<->,!?;$%^&*_]", password):
-            passwordStrongLevel = PasswordStats(password)
-        else:
-            passwordStrongLevel = PasswordStats(password)
+#         if len(password) < 6 or len(password) > 10:
+#             passwordStrongLevel = PasswordStats(password)
+#         elif not re.search("[a-z]", password):
+#             passwordStrongLevel = PasswordStats(password)
+#         elif not re.search("[0-9]", password):
+#             passwordStrongLevel = PasswordStats(password)
+#         elif not re.search("[A-Z]", password):
+#             passwordStrongLevel = PasswordStats(password)
+#         elif not re.search("[#@<->,!?;$%^&*_]", password):
+#             passwordStrongLevel = PasswordStats(password)
+#         else:
+#             passwordStrongLevel = PasswordStats(password)
         
-        return passwordStrongLevel
+#         return passwordStrongLevel
        
         

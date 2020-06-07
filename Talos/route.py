@@ -1,6 +1,6 @@
 from Talos import app, db
 from Talos.model import User
-from Talos.validators import EmailValidator, PasswordValidator, PasswordStronLevelValidator
+from Talos.validators import EmailValidator, PasswordValidator
 from password_strength import PasswordStats
 from cryptography.fernet import Fernet
 from flask import (render_template, 
@@ -15,7 +15,8 @@ import re
 
 emailValidator = EmailValidator()
 passwordValidator = PasswordValidator()
-passwordStrongLevel = PasswordStronLevelValidator()
+
+key = b'TX94plX7njPJ0e5H1egJXikQm7qy1t5k91DBAlPGiV8='
 
 
 
@@ -36,7 +37,57 @@ btnChecker = False
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('loginPage.html')
+    global key
+    validationMessage = ""
+    currentUserEmail = ""
+    currentUserPassword = ""
+    if request.method == 'POST':
+
+        email = request.form['txtEmail']
+        password = request.form['txtPassword']
+        f = Fernet(key)
+        users = User.query.all()
+        datas = {}
+        for user in users:
+
+            decryptUserEmail = f.decrypt(user.email)
+            decryptUserPassword = f.decrypt(user.password)
+
+            usersEmail = decryptUserEmail.decode('ascii')
+            usersPassword = decryptUserPassword.decode('ascii')
+
+            datas[usersEmail] = usersPassword 
+        print(datas)
+        for k,v in datas.items():
+            if email in k:
+                currentUserEmail = k
+            if password in v:
+                currentUserPassword = v
+        # print(currentUserEmail)
+        # print(currentUserPassword)
+        
+        if email == "" and password == "":
+            validationMessage = "Please fil the fields"
+        elif email == "":
+            validationMessage = "Please fill the email field"
+        elif password == "":
+            validationMessage = "Please fill the password field"
+        elif email not in currentUserEmail:
+            validationMessage = "Wrong Email, please try again"
+        elif password not in currentUserPassword:
+            validationMessage = "Wrong Password, please try again"
+        else:
+            if email == currentUserEmail and password == currentUserPassword:
+                
+                return redirect(url_for('verify'))
+    
+
+
+    return render_template('loginPage.html', validationMessage=validationMessage)
+
+@app.route('/verify', methods=['GET', 'POST'])
+def verify():
+    return render_template ('authPage.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -45,6 +96,7 @@ def register():
     global btnChecker
     passwordStrenght = 0
     passFlag = False
+    global key
     if request.method == 'POST':
 
         name = request.form['txtName']
@@ -62,6 +114,7 @@ def register():
             # print(passwordStrenght)
             validationMessage = results[0]
             passwordlvl = results[1]
+            # error otan patas to koubi vale try
             passwordStrenght = round(passwordlvl.strength(), 2)
         
         if 'btnRegister' in request.form:
@@ -73,7 +126,7 @@ def register():
                         checkInputEmail = emailValidator.checkEmail(email)
                         if checkInputEmail == "Email is valid!":
 
-                            key = Fernet.generate_key()
+                            # key = Fernet.generate_key()
                             f = Fernet(key)
                             encryptName = f.encrypt(name.encode('ascii'))
                             encryptSurname = f.encrypt(surname.encode('ascii'))
